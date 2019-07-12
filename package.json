@@ -1,0 +1,14 @@
+{
+  "name": "nodeserver",
+  "version": "1.0.0",
+  "description": "Simple Node server listing for POST request from WordPress site in order to update taxonomies",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Charlie Menke",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

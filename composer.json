@@ -1,0 +1,16 @@
+{
+    "name": "charliemenke/wptaxonomyapi",
+    "description": "php script that updates wordpress post taxonomies through wp api",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Charlie Menke",
+            "email": "charlie.menke@aspencore.com"
+        }
+    ],
+    "require": {
+        "rmccue/requests": "^1.7",
+        "ext-json": "*",
+        "vlucas/phpdotenv": "^3.4"
+    }
+}
