@@ -6,6 +6,7 @@ const amqp = require('amqplib');
 
 var open = amqp.connect("amqp://localhost");
 
+// Set up RabbitMQ messesging queue and bind to exchange (This is done on both server and reciever side)
 open
 	.then(connection => {
 		return connection.createChannel();
@@ -25,9 +26,8 @@ open
 		process.exit(1);
 	});
 
-
+// Confirm channel is created and plublish the message glenned from POST request
 function addMessage(message) {
-	console.log("PostID: " + message);
 	return open
 		.then(connection => {
 			return connection.createChannel();
@@ -36,15 +36,16 @@ function addMessage(message) {
 			channel.publish("sampleExchange", "routingKey", Buffer.from(message.toString()));
 			let msgTxt = message + " : Message send at " + new Date();
 			console.log(" [+] %s", msgTxt);
+			console.log("------------------------------------------------------------------------------------------------------|");
 			return new Promise(resolve => {
 				resolve(message);
 			});
 		});
 }
 
-
+// Very simple webserver listening specifically for POST requests wit postID params
 app.use(express.json());
-app.get('/', (req, res) => res.send('Hello World!'));
+app.get('/', (req, res) => res.send('I think you ment to POST to ->/postID'));
 app.post('/postID', (req, res) => {
 	//console.log(req);
 	addMessage(req.body.postID)
@@ -58,15 +59,3 @@ app.post('/postID', (req, res) => {
 });
 
 app.listen(3000, () => console.log('Listening for WordPress POST on port 3000!'));
-
-/*
-
-var sys = require('sys')
-var exec = require('child_process').exec;
-
-function puts(error, stdout, stderr) { sys.puts(stdout) }
-	exec("php wpAPI.php " + req.body.postID, function(err, stdout, stderr) {
-  		console.log(stdout);
-	});
-
-*/
