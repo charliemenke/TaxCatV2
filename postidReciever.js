@@ -18,7 +18,20 @@ function tokenFunc() {
 				let info = body.substring(body.indexOf("{"));
 				info = JSON.parse(body);
 				info = info.token;
-				resolve(info);
+				request({
+					url: process.env.WORDPRESS_ROOT_PATH + '/wp-json/jwt-auth/v1/token/validate',
+					ContentType: 'application/json',
+					method: 'POST',
+					auth: {'bearer' : info},
+					json: true
+				}, function(error, response, body) {
+					if(error) {
+						reject(error)
+					}
+					if(body.code == "jwt_auth_valid_token") {
+						resolve(info);
+					}
+				});
 			}
 		});
 	});
@@ -34,6 +47,9 @@ function postResponse(JWTtoken, postID) {
 			headers: {},
 			auth: {'bearer' : JWTtoken}
 		}, function(error,response,body) {
+			if(error) {
+				reject(error);
+			}
 			// Cleaning up response and parsing to JSON object
 			bodyStr = body.substring(body.indexOf('{"id"}'));
 			bodyStr = JSON.parse(bodyStr).content.rendered;
@@ -70,6 +86,9 @@ function watsonResponse(bodyStr) {
 			json : true
 			
 		}, function(error, response, body) {
+			if(error) {
+				reject(error);
+			}
 			// Parsing response for 'Company' and 'Person' entities
 			body.entities.forEach(function(entity) {
 				if(entity.type == "Company") {
@@ -101,15 +120,10 @@ return open
 			let result = "No messages in queue";
 			if (msgOrFalse !== false) {
 				result = msgOrFalse.content.toString() + " : Message recieved at " + new Date();
-				try {
-					let postID = msgOrFalse.content.toString();
-					let token = await tokenFunc();
-					let bodyStr = await postResponse(token, postID);
-					let terms = await watsonResponse(bodyStr);
-				} catch (err) {
-					console.log("Await Error:" + err);
-					process.exit(1);
-				}
+				let postID = msgOrFalse.content.toString();
+				let token = await tokenFunc().catch(error => console.log(error));
+				let bodyStr = await postResponse(token, postID).catch(error => console.log(error));
+				let terms = await watsonResponse(bodyStr).catch(error => console.log(error));
 				request({
 					url: process.env.WORDPRESS_ROOT_PATH + "/wp-json/wp/v2/posts/" + postID,
 					headers: {
@@ -137,3 +151,4 @@ return open
 		});
 
 	});
+
