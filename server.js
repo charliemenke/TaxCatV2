@@ -37,7 +37,7 @@ function addMessage(message) {
 		.then(channel => {		
 			channel.publish(exchangeName, "routingKey", Buffer.from(message.toString()));
 			let msgTxt = message + " : Message send at " + new Date();
-			console.log(" [+] %s", msgTxt);
+			console.log("\x1b[1;32m", "[+] ", msgTxt);
 			console.log("------------------------------------------------------------------------------------------------------|");
 			return new Promise(resolve => {
 				resolve(message);

@@ -146,7 +146,7 @@ return open
 			}
 			// Acknowledge message was processed and are ready for the next message in queue
 			channel.ack(msgOrFalse);
-			console.log(" [-] %s", result);
+			console.log("\x1b[1;36m", "[-] ", result);
 			console.log("-------------------------------------------------------------------------------------------------------|");
 		});
 
