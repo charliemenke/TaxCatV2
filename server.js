@@ -4,7 +4,9 @@ const app = express();
 const amqp = require('amqplib');
 
 
-var open = amqp.connect("amqp://localhost");
+const open = amqp.connect("amqp://localhost");
+const exchangeName = "analysePostID";
+const queueName = "postIDQueue";
 
 // Set up RabbitMQ messesging queue and bind to exchange (This is done on both server and reciever side)
 open
@@ -13,12 +15,12 @@ open
 	})
 	.then(channel => {
 		return channel
-			.assertExchange("sampleExchange", "direct", {durable: true})
+			.assertExchange(exchangeName, "direct", {durable: true})
 			.then(()=> {
-				return channel.assertQueue("sampleQueue", {exclusive: false});
+				return channel.assertQueue(queueName, {exclusive: false});
 			})
 			.then(q => {
-				return channel.bindQueue(q.queue, "sampleExchange", "routingKey");
+				return channel.bindQueue(q.queue, exchangeName, "routingKey");
 			});
 	})
 	.catch(err => {
@@ -33,7 +35,7 @@ function addMessage(message) {
 			return connection.createChannel();
 		})
 		.then(channel => {		
-			channel.publish("sampleExchange", "routingKey", Buffer.from(message.toString()));
+			channel.publish(exchangeName, "routingKey", Buffer.from(message.toString()));
 			let msgTxt = message + " : Message send at " + new Date();
 			console.log(" [+] %s", msgTxt);
 			console.log("------------------------------------------------------------------------------------------------------|");

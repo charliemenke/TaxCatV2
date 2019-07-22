@@ -88,6 +88,8 @@ function watsonResponse(bodyStr) {
  
 // Confirming RabbitMQ channel and queue connection
 const open = amqp.connect("amqp://localhost");
+const queueName = "postIDQueue";
+
 return open
     .then(conn => {
 		return conn.createChannel();
@@ -95,14 +97,19 @@ return open
 	.then(channel => {
 		// Setting up consumer for "sampleQueue" to read in messages sent by server.js
 		// This block of code is written utilizing the new ECS8 Async and Await functionality
-		return channel.consume("sampleQueue", async function(msgOrFalse) {
+		return channel.consume(queueName, async function(msgOrFalse) {
 			let result = "No messages in queue";
 			if (msgOrFalse !== false) {
 				result = msgOrFalse.content.toString() + " : Message recieved at " + new Date();
-				let postID = msgOrFalse.content.toString();
-				let token = await tokenFunc();
-				let bodyStr = await postResponse(token, postID);
-				let terms = await watsonResponse(bodyStr);
+				try {
+					let postID = msgOrFalse.content.toString();
+					let token = await tokenFunc();
+					let bodyStr = await postResponse(token, postID);
+					let terms = await watsonResponse(bodyStr);
+				} catch (err) {
+					console.log("Await Error:" + err);
+					process.exit(1);
+				}
 				request({
 					url: process.env.WORDPRESS_ROOT_PATH + "/wp-json/wp/v2/posts/" + postID,
 					headers: {
