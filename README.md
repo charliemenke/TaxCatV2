@@ -8,7 +8,7 @@ TaxCat is a Node.js Listening server that implements RabbitMQ's messaging protoc
 **Prerequisites**
 To set up your own local TaxCat instance, you first need a WordPress instance to work on. You will also need npm and node installed to run the server and to dependencies.
 
-To install TaxCat, first you must make some additions to your WordPress theme functions.php file. Add the following code to the bottom of the functions.php file. *Note: If you want to have taxonomies other than company and people, this is where you would make those changes and other necessary changes in server.js and postidreciever.js*
+To install TaxCat, first you must make some additions to your WordPress theme functions.php file as well as add the JWT Authentication Plugin [ https://wordpress.org/plugins/jwt-authentication-for-wp-rest-api/ ]. Follow the installation instructions and set up the JSON auth correctly, then add the following code to the bottom of the functions.php file. *Note: If you want to have taxonomies other than company and people, this is where you would make those changes and other necessary changes in server.js and postidreciever.js*
 ```php
 function custom_taxonomy()  
 {  
@@ -105,9 +105,9 @@ add_action("rest_after_insert_post", "cmAC_add_terms", 10, 3);
   
   
 function cmAC_send_postID($post_ID) {  
-    if( file_get_contents('php://input') ) {  
+  if( file_get_contents('php://input') ) {  
         return;  
-    }  
+  }  
   
     // Autosave, do nothing  
   if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )  

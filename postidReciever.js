@@ -16,7 +16,7 @@ function tokenFunc() {
 				reject(error)
 			} else {
 				let info = body.substring(body.indexOf("{"));
-				info = JSON.parse(body);
+				info = JSON.parse(info);
 				info = info.token;
 				request({
 					url: process.env.WORDPRESS_ROOT_PATH + '/wp-json/jwt-auth/v1/token/validate',
@@ -28,6 +28,8 @@ function tokenFunc() {
 					if(error) {
 						reject(error)
 					}
+					body = body.substring(body.indexOf("{"));
+					body = JSON.parse(body);
 					if(body.code == "jwt_auth_valid_token") {
 						resolve(info);
 					}
@@ -51,7 +53,8 @@ function postResponse(JWTtoken, postID) {
 				reject(error);
 			}
 			// Cleaning up response and parsing to JSON object
-			bodyStr = body.substring(body.indexOf('{"id"}'));
+			bodyStr = body.substring(body.indexOf('{"id"'));
+			bodyStr = bodyStr.substr(0,bodyStr.lastIndexOf("}") + 1);
 			bodyStr = JSON.parse(bodyStr).content.rendered;
 			resolve(bodyStr);
 		});
@@ -102,7 +105,6 @@ function watsonResponse(bodyStr) {
 			resolve([watPersonArray,watOrgArray]);
 		});
 	});
-
 }
  
 // Confirming RabbitMQ channel and queue connection
@@ -121,8 +123,11 @@ return open
 			if (msgOrFalse !== false) {
 				result = msgOrFalse.content.toString() + " : Message recieved at " + new Date();
 				let postID = msgOrFalse.content.toString();
+				//console.log(postID);
 				let token = await tokenFunc().catch(error => console.log(error));
+				//console.log(token);
 				let bodyStr = await postResponse(token, postID).catch(error => console.log(error));
+				//console.log(bodyStr);
 				let terms = await watsonResponse(bodyStr).catch(error => console.log(error));
 				request({
 					url: process.env.WORDPRESS_ROOT_PATH + "/wp-json/wp/v2/posts/" + postID,
