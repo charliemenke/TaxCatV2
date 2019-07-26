@@ -1,5 +1,6 @@
 const request = require('request');
 const amqp = require('amqplib');
+const aws = require('aws-sdk');
 require('dotenv').config();
 
 // Returns promise that resolves JWT Token for WordPress authentication
@@ -65,6 +66,7 @@ function postResponse(JWTtoken, postID) {
 function watsonResponse(bodyStr) {
 	let watOrgArray = [];
 	let watPersonArray = [];
+	let watConceptsArray = [];
 	return new Promise(function(resolve,reject) {
 		request({
 			url: "https://gateway.watsonplatform.net/natural-language-understanding/api/v1/analyze?version=2018-11-16",
@@ -83,6 +85,9 @@ function watsonResponse(bodyStr) {
 						"emotion" : false,
 						"sentiment" : false,
 						"limit" : 50
+					},
+					"concepts" : {
+						"limit" : 3
 					}
 				}
 			},
@@ -100,9 +105,13 @@ function watsonResponse(bodyStr) {
 					watPersonArray.push(entity.text)
 				}
 			});
+			body.concepts.forEach(function(concept) {
+				watConceptsArray.push(concept.text);
+			});
 			console.log("Organization terms found: " + watOrgArray);
 			console.log("Person terms found: " + watPersonArray);
-			resolve([watPersonArray,watOrgArray]);
+			console.log("Concepts found: " + watConceptsArray);
+			resolve([watPersonArray, watOrgArray, watConceptsArray]);
 		});
 	});
 }
@@ -136,6 +145,26 @@ function azureResponse(bodyStr) {
 			console.log("Organization terms found: " + azureOrgArray);
 			console.log("Person terms found: " + azurePersonArray);
 			resolve([azurePersonArray,azureOrgArray]);
+		});
+	});
+}
+
+function awsResponse(bodyStr) {
+	let awsOrgArray = [];
+	let awsPersonArray = [];
+	let comprehend = new aws.Comprehend();
+	return new Promise(function(resolve,reject) {
+		let params = {
+			LanguageCode: 'en',
+			Text: event.text 
+		};
+		comprehend.detectKeyPhrases(params, function(err, data) {
+			if(err) {
+				console.log(err, err.stack);
+			} else {
+				console.log(data);
+				resolve(data);
+			}
 		});
 	});
 }
@@ -178,7 +207,8 @@ return open
 						"fromServer" : "1",
 						"terms" : {
 							"people" : wterms[0],
-							"organization" : wterms[1]
+							"organization" : wterms[1],
+							"concept" : wterms[2]
 						}
 					}
 				}, function (error, response, body) {
