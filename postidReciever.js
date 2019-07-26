@@ -106,6 +106,39 @@ function watsonResponse(bodyStr) {
 		});
 	});
 }
+
+function azureResponse(bodyStr) {
+	let azureOrgArray = [];
+	let azurePersonArray = [];
+	let jsonData = { 'documents' : [{ 'id' : '1', 'text' : bodyStr, 'language' : 'en' }] };
+	return new Promise(function(resolve,reject) {
+		request({
+			url: "https://westus.api.cognitive.microsoft.com/text/analytics/v2.1/entities",
+			headers: {
+				'Content-type' : 'text/json',
+				'Ocp-Apim-Subscription-Key' : process.env.AZURE_ACCESS_KEY
+			},
+			body: JSON.stringify(jsonData),
+			json : true	
+		}, function(error, response, body) {
+			if(error) {
+				reject(error);
+			}
+			console.log(body);
+			// Parsing response for 'Company' and 'Person' entities
+			body.documents[0].entities.forEach(function(entity) {
+				if(entity.type == "Organization") {
+					azureOrgArray.push(entity.name)
+				} else if(entity.type == "Person") {
+					azurePersonArray.push(entity.name)
+				}
+			});
+			console.log("Organization terms found: " + azureOrgArray);
+			console.log("Person terms found: " + azurePersonArray);
+			resolve([azurePersonArray,azureOrgArray]);
+		});
+	});
+}
  
 // Confirming RabbitMQ channel and queue connection
 const open = amqp.connect("amqp://localhost");
@@ -128,7 +161,11 @@ return open
 				//console.log(token);
 				let bodyStr = await postResponse(token, postID).catch(error => console.log(error));
 				//console.log(bodyStr);
-				let terms = await watsonResponse(bodyStr).catch(error => console.log(error));
+				let wterms = await watsonResponse(bodyStr).catch(error => console.log(error));
+				//let aterms = await azureResponse(bodyStr).catch(error => console.log(error));
+				//orgTerms = array_unique(array_merge($wterms[1], $aterms[1]), SORT_REGULAR);
+				//personTerms = array_unique(array_merge($1terms[0], $aterms[0]), SORT_REGULAR);
+
 				request({
 					url: process.env.WORDPRESS_ROOT_PATH + "/wp-json/wp/v2/posts/" + postID,
 					headers: {
@@ -138,9 +175,10 @@ return open
 					method: "POST",
 					json: true,
 					body: {
+						"fromServer" : "1",
 						"terms" : {
-							"people" : terms[0],
-							"organization" : terms[1]
+							"people" : wterms[0],
+							"organization" : wterms[1]
 						}
 					}
 				}, function (error, response, body) {
