@@ -1,4 +1,5 @@
 
+const request = require('request');
 const express = require('express');
 const app = express();
 const amqp = require('amqplib');
@@ -28,13 +29,41 @@ open
 		process.exit(1);
 	});
 
+function checkPostIDValilidy(message) {
+	request({
+			url: process.env.WORDPRESS_ROOT_PATH + "/wp-json/wp/v2/posts/" + message,
+			method: "GET",
+			headers: {}
+			//auth: {'bearer' : JWTtoken}
+		}, function(error,response,body) {
+			if(error) {
+				console.log(error);
+				return false;
+			}
+			// Cleaning up response and parsing to JSON object
+			bodyStr = body.substring(body.indexOf('{'));
+			bodyStr = bodyStr.substr(0,bodyStr.lastIndexOf("}") + 1);
+			bodyStr = JSON.parse(bodyStr);
+			console.log(bodyStr);
+			if(bodyStr.id) {
+				return true;
+			} else {
+				console.log('resturning false');
+				return false;
+			}
+		});
+}
+
 // Confirm channel is created and plublish the message glenned from POST request
 function addMessage(message) {
 	return open
 		.then(connection => {
 			return connection.createChannel();
 		})
-		.then(channel => {		
+		.then(channel => {	
+			if(message == 00000) {
+				return;
+			}	
 			channel.publish(exchangeName, "routingKey", Buffer.from(message.toString()));
 			let msgTxt = message + " : Message send at " + new Date();
 			console.log("\x1b[1;32m", "[+] ", msgTxt);
@@ -45,11 +74,14 @@ function addMessage(message) {
 		});
 }
 
-// Very simple webserver listening specifically for POST requests wit postID params
+// Very simple webserver listening specifically for POST requests with postID params
 app.use(express.json());
+
 app.get('/', (req, res) => res.send('I think you ment to POST to ->/postID'));
 app.post('/postID', (req, res) => {
-	//console.log(req);
+	if(!checkPostIDValilidy(req.body.postID)) {
+		res.status(500).send();
+	}
 	addMessage(req.body.postID)
 		.then(resp => {
 			res.status(200).send();
@@ -61,3 +93,5 @@ app.post('/postID', (req, res) => {
 });
 
 app.listen(3000, () => console.log('Listening for WordPress POST on port 3000!'));
+
+module.exports = app;
