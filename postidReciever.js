@@ -183,10 +183,6 @@ return open
 		return channel.consume(queueName, async function(msgOrFalse) {
 			let result = "No messages in queue";
 			if (msgOrFalse !== false) {
-				if(msgOrFalse.content.toString() == "00000") {
-					channel.ack(msgOrFalse);
-					return;
-				}
 				result = msgOrFalse.content.toString() + " : Message recieved at " + new Date();
 				let postID = msgOrFalse.content.toString();
 				//console.log(postID);
