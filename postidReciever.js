@@ -124,7 +124,8 @@ function watsonResponse(bodyStr) {
 function azureResponse(bodyStr) {
 	let azureOrgArray = [];
 	let azurePersonArray = [];
-	let jsonData = { 'documents' : [{ 'id' : '1', 'text' : bodyStr, 'language' : 'en' }] };
+	let jsonData = { documents: [ { id : '1', text : bodyStr, language : 'en' } ] };
+				   
 	return new Promise(function(resolve,reject) {
 		request({
 			url: 'https://aspencoreaicognitiveapi.cognitiveservices.azure.com/text/analytics/v2.1/entities',
