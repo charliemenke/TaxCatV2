@@ -116,9 +116,6 @@ function watsonResponse(bodyStr) {
 			body.concepts.forEach(function(concept) {
 				watConceptsArray.push(concept.text);
 			});
-			console.log("Organization terms found: " + watOrgArray);
-			console.log("Person terms found: " + watPersonArray);
-			console.log("Concepts found: " + watConceptsArray);
 			resolve([watPersonArray, watOrgArray, watConceptsArray]);
 		});
 	});
@@ -133,26 +130,10 @@ function azureResponse(bodyStr) {
 			url: 'https://aspencoreaicognitiveapi.cognitiveservices.azure.com/text/analytics/v2.1/entities',
  			headers: 
     		{
-    			'cache-control': 'no-cache',
-     			Connection: 'keep-alive',
-     			'Content-Length': '140',
-     			'Accept-Encoding': 'gzip, deflate',
-     			Host: 'aspencoreaicognitiveapi.cognitiveservices.azure.com',
-     			'Postman-Token': '4a9281b1-240c-4ecd-8af0-684cbeb26297,da0be879-a3dd-48f3-ae5f-6ee33a156a86',
-     			'Cache-Control': 'no-cache',
-    			Accept: '*/*',
-    			'User-Agent': 'PostmanRuntime/7.15.2',
-    			'Ocp-Apim-Subscription-Key': '3d536f66ff9a44b0aaaa40b2475b3a9d',
+    			'Ocp-Apim-Subscription-Key': process.env.AZURE_ACCESS_KEY,
     			'Content-Type': 'application/json'
     		},
-			body: 
-   			{ documents: 
-    			[ { 
-    				id: '1',
-        			text: 'this is a text string all about the great company Cosctco',
-        			language: 'en' }
-        		]
-        	},
+			body: JSON.stringify(jsonData);
   			json: true
 		}, function(error, response, body) {
 			if(error) {
@@ -171,26 +152,6 @@ function azureResponse(bodyStr) {
 			console.log("Organization terms found: " + azureOrgArray);
 			console.log("Person terms found: " + azurePersonArray);
 			resolve([azurePersonArray,azureOrgArray]);
-		});
-	});
-}
-
-function awsResponse(bodyStr) {
-	let awsOrgArray = [];
-	let awsPersonArray = [];
-	let comprehend = new aws.Comprehend();
-	return new Promise(function(resolve,reject) {
-		let params = {
-			LanguageCode: 'en',
-			Text: event.text 
-		};
-		comprehend.detectKeyPhrases(params, function(err, data) {
-			if(err) {
-				console.log(err, err.stack);
-			} else {
-				console.log(data);
-				resolve(data);
-			}
 		});
 	});
 }
@@ -216,11 +177,13 @@ return open
 				//console.log(token);
 				let bodyStr = await postResponse(token, postID).catch(error => console.log(error));
 				//console.log(bodyStr);
-				let wterms = await watsonResponse(bodyStr).catch(error => console.log(error));
 				let aterms = await azureResponse(bodyStr).catch(error => console.log(error));
+				let wterms = await watsonResponse(bodyStr).catch(error => console.log(error));
 				orgTerms = array_unique(array_merge($wterms[1], $aterms[1]), SORT_REGULAR);
 				personTerms = array_unique(array_merge($1terms[0], $aterms[0]), SORT_REGULAR);
-
+				console.log("Organization terms found: " + orgTerms);
+				console.log("Person terms found: " + personTerms);
+				console.log("Concepts found: " + wterms[2]);
 				request({
 					url: process.env.WORDPRESS_ROOT_PATH + "/wp-json/wp/v2/posts/" + postID,
 					headers: {
