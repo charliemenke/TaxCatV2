@@ -140,7 +140,7 @@ function azureResponse(bodyStr) {
       				[ { id: '1',
           				text: bodyStr,
           				language: 'en' } ] },
-  			json: true }
+  			json: true
 		}, function(error, response, body) {
 			if(error) {
 				reject(error);
