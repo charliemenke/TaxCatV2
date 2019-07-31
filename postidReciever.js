@@ -18,9 +18,7 @@ function tokenFunc() {
 			} else {
 				let info = body.substring(body.indexOf("{"));
 				info = JSON.parse(info);
-				console.log(info);
 				info = info.token;
-				console.log(info);
 				resolve(info);
 				/*
 				request({
@@ -66,6 +64,7 @@ function postResponse(JWTtoken, postID) {
 			bodyStr = body.substring(body.indexOf('{"id"'));
 			bodyStr = bodyStr.substr(0,bodyStr.lastIndexOf("}") + 1);
 			bodyStr = JSON.parse(bodyStr).content.rendered;
+			console.log(bodyStr);
 			resolve(bodyStr);
 		});
 	});
