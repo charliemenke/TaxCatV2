@@ -29,7 +29,7 @@ function tokenFunc() {
 					if(error) {
 						reject(error);
 					}
-					if(body == undefined) {
+					if(body.substring(body.indexOf("{")) == undefined) {
 						reject(error);
 					}
 					body = body.substring(body.indexOf("{"));
