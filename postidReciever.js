@@ -127,7 +127,8 @@ function azureResponse(bodyStr) {
 	bodyStr = bodyStr.replace(/<[^>]*>?/gm, '');
 	if(bodyStr.toString().length > 5100) {
 		console.log("string too big, trimming down");
-		bodyStr.substring(0, 5000);
+		bodyStr = bodyStr.substring(0, 5000);
+		//console.log("article length " + bodyStr.length)
 	}
 	let jsonData = { documents: [ { id : '1', text : bodyStr, language : 'en' } ] };
 				   
