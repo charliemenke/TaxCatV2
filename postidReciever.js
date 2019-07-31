@@ -151,7 +151,6 @@ function azureResponse(bodyStr) {
 			if(error) {
 				reject(error);
 			}
-			console.log(body);
 
 			// Parsing response for 'Company' and 'Person' entities
 			body.documents[0].entities.forEach(function(entity) {
