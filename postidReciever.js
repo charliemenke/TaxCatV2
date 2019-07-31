@@ -132,7 +132,7 @@ function azureResponse(bodyStr) {
 		request({
 			url: "https://aspencoreaicognitiveapi.cognitiveservices.azure.com/text/analytics/v2.1/entities",
 			headers: {
-				'Content-type' : 'text/json',
+				'Content-type' : 'application/json',
 				'Ocp-Apim-Subscription-Key' : process.env.AZURE_ACCESS_KEY
 			},
 			body: JSON.stringify(jsonData),
