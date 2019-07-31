@@ -21,6 +21,7 @@ function tokenFunc() {
 				console.log(info);
 				info = info.token;
 				console.log(info);
+				resolve(info);
 				/*
 				request({
 					url: process.env.WORDPRESS_ROOT_PATH + '/wp-json/jwt-auth/v1/token/validate',
