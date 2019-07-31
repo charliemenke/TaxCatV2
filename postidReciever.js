@@ -128,6 +128,7 @@ function azureResponse(bodyStr) {
 	return new Promise(function(resolve,reject) {
 		request({
 			url: 'https://aspencoreaicognitiveapi.cognitiveservices.azure.com/text/analytics/v2.1/entities',
+ 			method: 'POST',
  			headers: 
     		{
     			'Ocp-Apim-Subscription-Key': process.env.AZURE_ACCESS_KEY,
