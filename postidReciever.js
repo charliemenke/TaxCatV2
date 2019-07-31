@@ -64,7 +64,6 @@ function postResponse(JWTtoken, postID) {
 			bodyStr = body.substring(body.indexOf('{"id"'));
 			bodyStr = bodyStr.substr(0,bodyStr.lastIndexOf("}") + 1);
 			bodyStr = JSON.parse(bodyStr).content.rendered;
-			console.log(bodyStr);
 			resolve(bodyStr);
 		});
 	});
@@ -130,6 +129,7 @@ function azureResponse(bodyStr) {
 		bodyStr = bodyStr.substring(0, 5000);
 		//console.log("article length " + bodyStr.length)
 	}
+	console.log(bodyStr);
 	let jsonData = { documents: [ { id : '1', text : bodyStr, language : 'en' } ] };
 				   
 	return new Promise(function(resolve,reject) {
