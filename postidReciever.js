@@ -155,8 +155,6 @@ function azureResponse(bodyStr) {
 					azurePersonArray.push(entity.name)
 				}
 			});
-			console.log("Organization terms found: " + azureOrgArray);
-			console.log("Person terms found: " + azurePersonArray);
 			resolve([azurePersonArray,azureOrgArray]);
 		});
 	});
