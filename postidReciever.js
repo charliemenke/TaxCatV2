@@ -185,8 +185,8 @@ return open
 				//console.log(bodyStr);
 				let aterms = await azureResponse(bodyStr).catch(error => console.log(error));
 				let wterms = await watsonResponse(bodyStr).catch(error => console.log(error));
-				orgTerms = array_unique(array_merge($wterms[1], $aterms[1]), SORT_REGULAR);
-				personTerms = array_unique(array_merge($1terms[0], $aterms[0]), SORT_REGULAR);
+				let orgTerms = [...wterms[1], ...aterms[1]];
+				let personTerms = [...wterms[0], ...aterms[0]];
 				console.log("Organization terms found: " + orgTerms);
 				console.log("Person terms found: " + personTerms);
 				console.log("Concepts found: " + wterms[2]);
