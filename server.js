@@ -5,7 +5,7 @@ const app = express();
 const amqp = require('amqplib');
 
 const port = process.env.PORT || 3000;
-const open = amqp.connect("amqp://user:8RlLKbvyHa71@13.89.60.146:5672");
+const open = amqp.connect("amqp://user:8RlLKbvyHa71@10.0.0.4:5672");
 const exchangeName = "analysePostID";
 const queueName = "postIDQueue";
 require('dotenv').config();
