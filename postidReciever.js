@@ -199,9 +199,9 @@ return open
 				let bodyStr = await postResponse(token, postID).catch(error => console.log(error));
 				//console.log(bodyStr);
 				let wterms = await watsonResponse(bodyStr).catch(error => console.log(error));
-				//let aterms = await azureResponse(bodyStr).catch(error => console.log(error));
-				//orgTerms = array_unique(array_merge($wterms[1], $aterms[1]), SORT_REGULAR);
-				//personTerms = array_unique(array_merge($1terms[0], $aterms[0]), SORT_REGULAR);
+				let aterms = await azureResponse(bodyStr).catch(error => console.log(error));
+				orgTerms = array_unique(array_merge($wterms[1], $aterms[1]), SORT_REGULAR);
+				personTerms = array_unique(array_merge($1terms[0], $aterms[0]), SORT_REGULAR);
 
 				request({
 					url: process.env.WORDPRESS_ROOT_PATH + "/wp-json/wp/v2/posts/" + postID,
@@ -214,8 +214,8 @@ return open
 					body: {
 						"fromServer" : "1",
 						"terms" : {
-							"people" : wterms[0],
-							"organization" : wterms[1],
+							"people" : personTerms,
+							"organization" : orgTerms,
 							"concept" : wterms[2]
 						}
 					}
