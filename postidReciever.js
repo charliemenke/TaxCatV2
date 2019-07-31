@@ -18,7 +18,9 @@ function tokenFunc() {
 			} else {
 				let info = body.substring(body.indexOf("{"));
 				info = JSON.parse(info);
+				console.log(info);
 				info = info.token;
+				console.log(info);
 				request({
 					url: process.env.WORDPRESS_ROOT_PATH + '/wp-json/jwt-auth/v1/token/validate',
 					ContentType: 'application/json',
@@ -34,6 +36,7 @@ function tokenFunc() {
 					}
 					body = body.substring(body.indexOf("{"));
 					body = JSON.parse(body);
+					console.log(body);
 					if(body.code == "jwt_auth_valid_token") {
 						resolve(info);
 					}
