@@ -124,6 +124,10 @@ function watsonResponse(bodyStr) {
 function azureResponse(bodyStr) {
 	let azureOrgArray = [];
 	let azurePersonArray = [];
+	bodyStr = bodyStr.replace(/<[^>]*>?/gm, '');
+	if(bodyStr.length >= 5100) {
+		bodyStr.substring(0, 5100);
+	}
 	let jsonData = { documents: [ { id : '1', text : bodyStr, language : 'en' } ] };
 				   
 	return new Promise(function(resolve,reject) {
