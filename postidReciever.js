@@ -135,8 +135,12 @@ function azureResponse(bodyStr) {
     			'Ocp-Apim-Subscription-Key': process.env.AZURE_ACCESS_KEY,
     			'Content-Type': 'application/json'
     		},
-			body: JSON.stringify(jsonData),
-  			json: true
+			body: 
+   				{ documents: 
+      				[ { id: '1',
+          				text: bodyStr,
+          				language: 'en' } ] },
+  			json: true }
 		}, function(error, response, body) {
 			if(error) {
 				reject(error);
