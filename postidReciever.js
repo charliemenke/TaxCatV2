@@ -29,8 +29,7 @@ function tokenFunc() {
 					if(error) {
 						reject(error);
 					}
-					console.log(body);
-					if(!body) {
+					if(body == undefined) {
 						reject("Not a real postID");
 					}
 					body = body.substring(body.indexOf("{"));
