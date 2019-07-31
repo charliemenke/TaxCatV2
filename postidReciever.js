@@ -27,7 +27,10 @@ function tokenFunc() {
 					json: true
 				}, function(error, response, body) {
 					if(error) {
-						reject(error)
+						reject(error);
+					}
+					if(body == undefined) {
+						reject(error);
 					}
 					body = body.substring(body.indexOf("{"));
 					body = JSON.parse(body);
@@ -122,7 +125,7 @@ function azureResponse(bodyStr) {
 	let jsonData = { 'documents' : [{ 'id' : '1', 'text' : bodyStr, 'language' : 'en' }] };
 	return new Promise(function(resolve,reject) {
 		request({
-			url: "https://westus.api.cognitive.microsoft.com/text/analytics/v2.1/entities",
+			url: "https://aspencoreaicognitiveapi.cognitiveservices.azure.com/text/analytics/v2.1/entities",
 			headers: {
 				'Content-type' : 'text/json',
 				'Ocp-Apim-Subscription-Key' : process.env.AZURE_ACCESS_KEY
