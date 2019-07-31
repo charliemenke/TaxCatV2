@@ -130,18 +130,36 @@ function azureResponse(bodyStr) {
 	let jsonData = { 'documents' : [{ 'id' : '1', 'text' : bodyStr, 'language' : 'en' }] };
 	return new Promise(function(resolve,reject) {
 		request({
-			url: "https://aspencoreaicognitiveapi.cognitiveservices.azure.com/text/analytics/v2.1/entities",
-			headers: {
-				'Content-type' : 'application/json',
-				'Ocp-Apim-Subscription-Key' : process.env.AZURE_ACCESS_KEY
-			},
-			body: JSON.stringify(jsonData),
-			json : true	
+			url: 'https://aspencoreaicognitiveapi.cognitiveservices.azure.com/text/analytics/v2.1/entities',
+ 			headers: 
+    		{
+    			'cache-control': 'no-cache',
+     			Connection: 'keep-alive',
+     			'Content-Length': '140',
+     			'Accept-Encoding': 'gzip, deflate',
+     			Host: 'aspencoreaicognitiveapi.cognitiveservices.azure.com',
+     			'Postman-Token': '4a9281b1-240c-4ecd-8af0-684cbeb26297,da0be879-a3dd-48f3-ae5f-6ee33a156a86',
+     			'Cache-Control': 'no-cache',
+    			Accept: '*/*',
+    			'User-Agent': 'PostmanRuntime/7.15.2',
+    			'Ocp-Apim-Subscription-Key': '3d536f66ff9a44b0aaaa40b2475b3a9d',
+    			'Content-Type': 'application/json'
+    		},
+			body: 
+   			{ documents: 
+    			[ { 
+    				id: '1',
+        			text: 'this is a text string all about the great company Cosctco',
+        			language: 'en' }
+        		]
+        	},
+  			json: true
 		}, function(error, response, body) {
 			if(error) {
 				reject(error);
 			}
 			console.log(body);
+
 			// Parsing response for 'Company' and 'Person' entities
 			body.documents[0].entities.forEach(function(entity) {
 				if(entity.type == "Organization") {
