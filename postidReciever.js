@@ -170,7 +170,7 @@ function awsResponse(bodyStr) {
 }
  
 // Confirming RabbitMQ channel and queue connection
-const open = amqp.connect("amqp://localhost");
+const open = amqp.connect("amqp://user:00031113@127.0.0.1:5672");
 const queueName = "postIDQueue";
 
 return open
