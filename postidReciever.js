@@ -29,8 +29,8 @@ function tokenFunc() {
 					if(error) {
 						reject(error);
 					}
-					if(body.substring(body.indexOf("{")) == undefined) {
-						reject(error);
+					if(!body) {
+						reject("Not a real postID");
 					}
 					body = body.substring(body.indexOf("{"));
 					body = JSON.parse(body);
