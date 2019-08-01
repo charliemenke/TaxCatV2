@@ -107,7 +107,7 @@ function checkPostIDValilidy(message) {
 }
 
 // Confirm channel is created and plublish the message glenned from POST request
-function addMessage(message) {
+async function addMessage(message) {
 	return open
 		.then(connection => {
 			return connection.createChannel();
@@ -135,14 +135,13 @@ app.use(express.json());
 
 app.get('/', (req, res) => res.send('I think you ment to POST to ->/postID'));
 app.post('/postID', (req, res) => {
-	addMessage(req.body.postID)
-		.then(resp => {
-			res.status(resp).send();
-		})
-		.catch(err => {
-			console.log("error:", err);
-			res.status(500).send(err);
-		});
+	try {
+		let status = await addMessage(req.body.postID);
+		res.status(resp).send();
+	} catch (e) {
+		console.log("error:", e);
+		res.status(500).send(e);
+	}
 });
 
 app.listen(port, () => console.log('Listening for WordPress POST on port ' + port + '!'));
