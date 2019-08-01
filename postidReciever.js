@@ -173,7 +173,7 @@ function splitDocument(bodyStr) {
 	numSplits = docLength % 5100;
 	return new Promise(function(resolve, reject) {
 		if(numSplits == 0) {
-			let termArr = awat azureResponse(bodyStr);
+			let termArr = await azureResponse(bodyStr);
 			termArr[0].forEach(function(term) {
 				azurePersonArray.push(term);
 			});
