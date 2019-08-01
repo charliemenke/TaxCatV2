@@ -181,9 +181,10 @@ function splitDocument(bodyStr) {
 				azureOrgArray.push(term);
 			});
 		} else {
-			let docsToReturn = [];
+			console.log("Document too long at " + docLength + " chars");
 			for(let i = 0; i <= numSplits; i++) {
-				subDoc = bodyStr.substring(i*5100,5100*(i+1));
+				let subDoc = bodyStr.substring(i*5100,5100*(i+1));
+				console.log("---------------------------------------------------------------------------------------");
 				let termArr = await azureResponse(subDoc);
 				termArr[0].forEach(function(term) {
 					azurePersonArray.push(term);
