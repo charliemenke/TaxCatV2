@@ -100,12 +100,12 @@ function checkPostIDValilidy(message) {
 }
 
 // Confirm channel is created and plublish the message glenned from POST request
-async function addMessage(message) {
+function addMessage(message) {
 	return open
 		.then(connection => {
 			return connection.createChannel();
 		})
-		.then(channel => {
+		.then(async channel => {
 			let postValidity = await checkPostIDValilidy(message);			
 			return new Promise(resolve => {
 				if(postValidity) {
