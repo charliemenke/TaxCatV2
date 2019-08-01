@@ -182,8 +182,13 @@ function splitDocument(bodyStr) {
 			});
 		} else {
 			console.log("Document too long at " + docLength + " chars");
-			for(let i = 0; i < numSplits; i++) {
-				let subDoc = bodyStr.substring(i*5100,5100*(i+1));
+			for(let i = 0; i <= numSplits; i++) {
+				if(i == numSplits - 1) {
+					let subDoc = bodyStr.substring(i*5100);
+				} else {
+					let subDoc = bodyStr.substring(i*5100,5100*(i+1));
+				}
+				
 				console.log("---------------------------------------------------------------------------------------");
 				let termArr = await azureResponse(subDoc);
 				termArr[0].forEach(function(term) {
