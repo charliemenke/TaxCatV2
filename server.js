@@ -86,7 +86,7 @@ function checkPostIDValilidy(message) {
 				}
 				// Cleaning up response and parsing to JSON object
 				//console.log(body);
-				let bodyStr = body.substring(body.toString().indexOf('{'));
+				let bodyStr = body.toString().substring(body.toString().indexOf('{'));
 				//bodyStr = bodyStr.substr(0,bodyStr.lastIndexOf("}") + 1);
 				//console.log(bodyStr);
 				bodyStr = JSON.parse(bodyStr);
