@@ -93,8 +93,10 @@ function checkPostIDValilidy(message) {
 				console.log(bodyStr);
 				return new Promise(function(resolve,reject) {
 					if(body.id) {
+						console.log("returning true");
 						resolve(true);
 					} else {
+						console.log("returning false");
 						resolve(false);
 					}
 				});
