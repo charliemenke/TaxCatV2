@@ -134,7 +134,7 @@ async function addMessage(message) {
 app.use(express.json());
 
 app.get('/', (req, res) => res.send('I think you ment to POST to ->/postID'));
-app.post('/postID', (req, res) => {
+app.post('/postID', async (req, res) => {
 	try {
 		let status = await addMessage(req.body.postID);
 		res.status(resp).send();
