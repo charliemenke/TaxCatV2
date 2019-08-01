@@ -105,6 +105,7 @@ async function checkPostIDValilidy(message) {
 
 // Confirm channel is created and plublish the message glenned from POST request
 function addMessage(message, valid) {
+	console.log("valid: " + valid);
 	return open
 		.then(connection => {
 			return connection.createChannel();
