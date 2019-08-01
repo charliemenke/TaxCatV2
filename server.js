@@ -90,6 +90,7 @@ function checkPostIDValilidy(message) {
 				//bodyStr = bodyStr.substr(0,bodyStr.lastIndexOf("}") + 1);
 				//console.log(bodyStr);
 				bodyStr = JSON.stringify(bodyStr);
+				console.log(bodyStr);
 				return new Promise(function(resolve,reject) {
 					if(body.id) {
 						resolve(true);
