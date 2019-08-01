@@ -162,7 +162,7 @@ function azureResponse(bodyStr) {
 	});
 }
 
-function splitDocument(bodyStr) {
+async function splitDocument(bodyStr) {
 	let azureOrgArray = [];
 	let azurePersonArray = [];
 
