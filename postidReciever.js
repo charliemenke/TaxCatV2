@@ -171,6 +171,7 @@ function splitDocument(bodyStr) {
 
 	docLength = bodyStr.length;
 	numSplits = docLength % 5100;
+	console.log("Number of subDocs: " + numSplits);
 	return new Promise(async function(resolve, reject) {
 		if(numSplits == 0) {
 			let termArr = await azureResponse(bodyStr);
@@ -182,7 +183,7 @@ function splitDocument(bodyStr) {
 			});
 		} else {
 			console.log("Document too long at " + docLength + " chars");
-			for(let i = 0; i < numSplits; i++) {
+			for(let i = 0; i < numSplits - 1; i++) {
 				let subDoc;
 				if(i == numSplits - 1) {
 					subDoc = bodyStr.substring(i*5100);
