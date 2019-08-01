@@ -90,7 +90,6 @@ function checkPostIDValilidy(message) {
 					if(bodyStr.id == message) {
 						resolve(true);
 					} else {
-						console.log('returning false');
 						resolve(false);
 					}
 				});
@@ -107,21 +106,20 @@ function addMessage(message) {
 			return connection.createChannel();
 		})
 		.then(channel => {
-			//return new Promise( async function(resolve) {
-				//let valididy = await checkPostIDValilidy(message);
-				//if(!valididy) {
-				//	console.log("postID is not valid");
-				//	resolve(500);
-				//	return;
-				//}	
-				channel.publish(exchangeName, "routingKey", Buffer.from(message.toString()));
-				let msgTxt = message + " : Message send at " + new Date();
-				console.log("\x1b[1;32m", "[+] ", msgTxt);
-				console.log("------------------------------------------------------------------------------------------------------|");				
-				return new Promise(resolve => {
+			let postValidity = await checkPostIDValilidy(message);			
+			return new Promise(resolve => {
+				if(postValidity) {
+					console.log("Valid Post! Sending ID.");
+					channel.publish(exchangeName, "routingKey", Buffer.from(message.toString()));
+					let msgTxt = message + " : Message send at " + new Date();
+					console.log("\x1b[1;32m", "[+] ", msgTxt);
+					console.log("------------------------------------------------------------------------------------------------------|");
 					resolve(200);
-				});
-			//});
+				} else {
+					console.log("Invalid Post, dropping message.");
+					resolve(500);
+				}
+			});
 		});
 }
 

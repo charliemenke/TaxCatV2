@@ -71,6 +71,9 @@ function postResponse(JWTtoken, postID) {
 
 // Returns promise that resolves with Watson's responses from the post's body text (two arrays)
 function watsonResponse(bodyStr) {
+	// Triming whitspace and html chars
+	bodyStr = bodyStr.replace(/<[^>]*>?/gm, '');
+	bodyStr = bodyStr.replace(/\s\s+/g, ' ');
 	let watOrgArray = [];
 	let watPersonArray = [];
 	let watConceptsArray = [];
@@ -123,14 +126,7 @@ function watsonResponse(bodyStr) {
 function azureResponse(bodyStr) {
 	let azureOrgArray = [];
 	let azurePersonArray = [];
-	// trim whitespace and html chars
-	bodyStr = bodyStr.replace(/<[^>]*>?/gm, '');
-	bodyStr = bodyStr.replace(/\s\s+/g, ' ');
-	if(bodyStr.toString().length > 5100) {
-		console.log("string too big, trimming down");
-		bodyStr = bodyStr.substring(0, 5000);
-		//console.log("article length " + bodyStr.length)
-	}
+
 	console.log(bodyStr);
 	let jsonData = { documents: [ { id : '1', text : bodyStr, language : 'en' } ] };
 				   
@@ -153,7 +149,6 @@ function azureResponse(bodyStr) {
 			if(error) {
 				reject(error);
 			}
-
 			// Parsing response for 'Company' and 'Person' entities
 			body.documents[0].entities.forEach(function(entity) {
 				if(entity.type == "Organization") {
@@ -164,6 +159,41 @@ function azureResponse(bodyStr) {
 			});
 			resolve([azurePersonArray,azureOrgArray]);
 		});
+	});
+}
+
+function splitDocument(bodyStr) {
+	let azureOrgArray = [];
+	let azurePersonArray = [];
+
+	bodyStr = bodyStr.replace(/<[^>]*>?/gm, '');
+	bodyStr = bodyStr.replace(/\s\s+/g, ' ');
+
+	docLength = bodyStr.length;
+	numSplits = docLength % 5100;
+	return new Promise(function(resolve, reject) {
+		if(numSplits == 0) {
+			let termArr = awat azureResponse(bodyStr);
+			termArr[0].forEach(function(term) {
+				azurePersonArray.push(term);
+			});
+			termArr[1].forEach(function(term) {
+				azureOrgArray.push(term);
+			});
+		} else {
+			let docsToReturn = [];
+			for(let i = 0; i <= numSplits; i++) {
+				subDoc = bodyStr.substring(i*5100,5100*(i+1));
+				let termArr = await azureResponse(subDoc);
+				termArr[0].forEach(function(term) {
+					azurePersonArray.push(term);
+				});
+				termArr[1].forEach(function(term) {
+					azureOrgArray.push(term);
+				});
+			}
+		}
+		resolve([azurePersonArray,azureOrgArray]);
 	});
 }
  
@@ -188,7 +218,7 @@ return open
 				//console.log(token);
 				let bodyStr = await postResponse(token, postID).catch(error => console.log(error));
 				//console.log(bodyStr);
-				let aterms = await azureResponse(bodyStr).catch(error => console.log(error));
+				let aterms = await splitDocument(bodyStr).catch(error => console.log(error));
 				let wterms = await watsonResponse(bodyStr).catch(error => console.log(error));
 				let orgTerms = [...wterms[1], ...aterms[1]];
 				let personTerms = [...wterms[0], ...aterms[0]];
