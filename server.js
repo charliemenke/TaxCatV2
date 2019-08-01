@@ -45,7 +45,6 @@ function tokenFunc() {
 				let info = body.substring(body.indexOf("{"));
 				info = JSON.parse(info);
 				info = info.token;
-				console.log(info);
 				resolve(info);
 				/*
 				request({
@@ -92,7 +91,7 @@ function checkPostIDValilidy(message) {
 				//console.log(bodyStr);
 				//bodyStr = JSON.parse(body.toString());
 				return new Promise(function(resolve,reject) {
-					if(body.id == message) {
+					if(body.id) {
 						resolve(true);
 					} else {
 						resolve(false);
