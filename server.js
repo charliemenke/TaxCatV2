@@ -45,6 +45,8 @@ function tokenFunc() {
 				let info = body.substring(body.indexOf("{"));
 				info = JSON.parse(info);
 				info = info.token;
+				resolve(info);
+				/*
 				request({
 					url: process.env.WORDPRESS_ROOT_PATH + '/wp-json/jwt-auth/v1/token/validate',
 					ContentType: 'application/json',
@@ -61,6 +63,7 @@ function tokenFunc() {
 						resolve(info);
 					}
 				});
+				*/
 			}
 		});
 	});
