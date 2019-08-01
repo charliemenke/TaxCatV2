@@ -185,7 +185,7 @@ function splitDocument(bodyStr) {
 			console.log("Document too long at " + docLength + " chars");
 			for(let i = 0; i <= numSplits; i++) {
 				let subDoc;
-				if(i == numSplits - 1) {
+				if(i == numSplits) {
 					subDoc = bodyStr.substring(i*5100);
 				} else {
 					subDoc = bodyStr.substring(i*5100,5100*(i+1));
