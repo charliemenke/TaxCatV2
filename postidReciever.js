@@ -162,7 +162,7 @@ function azureResponse(bodyStr) {
 	});
 }
 
-async function splitDocument(bodyStr) {
+function splitDocument(bodyStr) {
 	let azureOrgArray = [];
 	let azurePersonArray = [];
 
@@ -171,7 +171,7 @@ async function splitDocument(bodyStr) {
 
 	docLength = bodyStr.length;
 	numSplits = docLength % 5100;
-	return new Promise(function(resolve, reject) {
+	return new Promise(async function(resolve, reject) {
 		if(numSplits == 0) {
 			let termArr = await azureResponse(bodyStr);
 			termArr[0].forEach(function(term) {
