@@ -90,9 +90,9 @@ function checkPostIDValilidy(message) {
 				//bodyStr = body.substring(body.indexOf('{'));
 				//bodyStr = bodyStr.substr(0,bodyStr.lastIndexOf("}") + 1);
 				//console.log(bodyStr);
-				bodyStr = JSON.parse(body.toString());
+				//bodyStr = JSON.parse(body.toString());
 				return new Promise(function(resolve,reject) {
-					if(bodyStr.id == message) {
+					if(body.id == message) {
 						resolve(true);
 					} else {
 						resolve(false);
