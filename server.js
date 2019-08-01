@@ -86,11 +86,11 @@ function checkPostIDValilidy(message) {
 					return false;
 				}
 				// Cleaning up response and parsing to JSON object
+				console.log(bodyStr);
 				bodyStr = body.substring(body.indexOf('{'));
 				bodyStr = bodyStr.substr(0,bodyStr.lastIndexOf("}") + 1);
 				//console.log(bodyStr);
 				bodyStr = JSON.parse(bodyStr);
-				console.log(bodyStr);
 				return new Promise(function(resolve,reject) {
 					if(bodyStr.id == message) {
 						resolve(true);
