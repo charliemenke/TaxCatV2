@@ -71,33 +71,34 @@ function tokenFunc() {
 
 async function checkPostIDValilidy(message) {
 	let token = await tokenFunc()
-	request({
-		url: process.env.WORDPRESS_ROOT_PATH + "/wp-json/wp/v2/posts/" + message,
-		ContentType: 'application/json',
-		method: "GET",
-		headers: {},
-		auth: {'bearer' : token},
-		json: true
-	}, function(error,response,body) {
-		if(error) {
-			console.log("error: ", error);
-			return false;
-		}
-		// Cleaning up response and parsing to JSON object
-		//console.log(body);
-		let bodyStr = body.toString().substring(body.toString().indexOf('{'));
-		//bodyStr = bodyStr.substr(0,bodyStr.lastIndexOf("}") + 1);
-		//console.log(bodyStr);
-		bodyStr = JSON.stringify(bodyStr);
-		console.log(bodyStr);
-		return new Promise(function(resolve,reject) {
-			if(body.id) {
-				console.log("returning true");
-				resolve(1);
-			} else {
-				console.log("returning false");
-				resolve(0);
+	return new Promise(function(resolve,reject) {
+		request({
+			url: process.env.WORDPRESS_ROOT_PATH + "/wp-json/wp/v2/posts/" + message,
+			ContentType: 'application/json',
+			method: "GET",
+			headers: {},
+			auth: {'bearer' : token},
+			json: true
+		}, function(error,response,body) {
+			if(error) {
+				console.log("error: ", error);
+				return false;
 			}
+			// Cleaning up response and parsing to JSON object
+			//console.log(body);
+			let bodyStr = body.toString().substring(body.toString().indexOf('{'));
+			//bodyStr = bodyStr.substr(0,bodyStr.lastIndexOf("}") + 1);
+			//console.log(bodyStr);
+			bodyStr = JSON.stringify(bodyStr);
+			console.log(bodyStr);
+		
+				if(body.id) {
+					console.log("returning true");
+					resolve(1);
+				} else {
+					console.log("returning false");
+					resolve(0);
+				}
 		});
 		
 	});	
