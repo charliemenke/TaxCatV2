@@ -123,7 +123,9 @@ function watsonResponse(bodyStr) {
 function azureResponse(bodyStr) {
 	let azureOrgArray = [];
 	let azurePersonArray = [];
+	// trim whitespace and html chars
 	bodyStr = bodyStr.replace(/<[^>]*>?/gm, '');
+	bodyStr = bodyStr.replace(/\s\s+/g, ' ');
 	if(bodyStr.toString().length > 5100) {
 		console.log("string too big, trimming down");
 		bodyStr = bodyStr.substring(0, 5000);
