@@ -107,15 +107,14 @@ function checkPostIDValilidy(message) {
 }
 
 // Confirm channel is created and plublish the message glenned from POST request
-async function addMessage(message) {
+function addMessage(message, valid) {
 	return open
 		.then(connection => {
 			return connection.createChannel();
 		})
-		.then(async channel => {
-			let postValidity = await checkPostIDValilidy(message);			
+		.then(channel => {			
 			return new Promise(resolve => {
-				if(postValidity) {
+				if(valid) {
 					console.log("Valid Post! Sending ID.");
 					channel.publish(exchangeName, "routingKey", Buffer.from(message.toString()));
 					let msgTxt = message + " : Message send at " + new Date();
@@ -136,8 +135,9 @@ app.use(express.json());
 app.get('/', (req, res) => res.send('I think you ment to POST to ->/postID'));
 app.post('/postID', async (req, res) => {
 	try {
-		let status = await addMessage(req.body.postID);
-		res.status(resp).send();
+		let postValidity = await checkPostIDValilidy(message);
+		let status = await addMessage(req.body.postID, postValidity);
+		res.status(status).send();
 	} catch (e) {
 		console.log("error:", e);
 		res.status(500).send(e);
