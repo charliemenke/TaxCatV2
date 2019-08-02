@@ -84,19 +84,11 @@ async function checkPostIDValilidy(message) {
 				console.log("error: ", error);
 				return false;
 			}
-			// Cleaning up response and parsing to JSON object
-			//console.log(body);
 			let bodyStr = body.toString().substring(body.toString().indexOf('{'));
-			//bodyStr = bodyStr.substr(0,bodyStr.lastIndexOf("}") + 1);
-			//console.log(bodyStr);
-			bodyStr = JSON.stringify(bodyStr);
-			console.log(bodyStr);
-		
+			bodyStr = JSON.stringify(bodyStr);		
 				if(body.id) {
-					console.log("returning true");
 					resolve(1);
 				} else {
-					console.log("returning false");
 					resolve(0);
 				}
 		});
@@ -135,7 +127,6 @@ app.get('/', (req, res) => res.send('I think you ment to POST to ->/postID'));
 app.post('/postID', async (req, res) => {
 	try {
 		let postValidity = await checkPostIDValilidy(req.body.postID);
-		console.log(postValidity);
 		let status = await addMessage(req.body.postID, postValidity);
 		res.status(status).send();
 	} catch (e) {

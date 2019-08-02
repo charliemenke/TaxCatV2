@@ -126,8 +126,6 @@ function watsonResponse(bodyStr) {
 function azureResponse(bodyStr) {
 	let azureOrgArray = [];
 	let azurePersonArray = [];
-
-	console.log(bodyStr);
 	let jsonData = { documents: [ { id : '1', text : bodyStr, language : 'en' } ] };
 				   
 	return new Promise(function(resolve,reject) {
@@ -171,7 +169,6 @@ function splitDocument(bodyStr) {
 
 	docLength = bodyStr.length;
 	numSplits = Math.floor(docLength / 5100);
-	console.log("Number of subDocs: " + numSplits);
 	return new Promise(async function(resolve, reject) {
 		if(numSplits == 0) {
 			let termArr = await azureResponse(bodyStr);
@@ -183,6 +180,7 @@ function splitDocument(bodyStr) {
 			});
 		} else {
 			console.log("Document too long at " + docLength + " chars");
+			console.log("Number of subDocs: " + numSplits);
 			for(let i = 0; i <= numSplits; i++) {
 				let subDoc;
 				if(i == numSplits) {
@@ -190,8 +188,6 @@ function splitDocument(bodyStr) {
 				} else {
 					subDoc = bodyStr.substring(i*5100,5100*(i+1));
 				}
-				
-				console.log("---------------------------------------------------------------------------------------");
 				let termArr = await azureResponse(subDoc);
 				termArr[0].forEach(function(term) {
 					azurePersonArray.push(term);
