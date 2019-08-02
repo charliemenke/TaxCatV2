@@ -149,10 +149,14 @@ function azureResponse(bodyStr) {
 			}
 			// Parsing response for 'Company' and 'Person' entities
 			body.documents[0].entities.forEach(function(entity) {
-				if(entity.type == "Organization") {
-					azureOrgArray.push(entity.name)
-				} else if(entity.type == "Person") {
-					azurePersonArray.push(entity.name)
+				if(entity.type == "Organization" && entity.matches[0].hasOwnProperty('wikipediaScore')) {
+					if(entity.matches[0].hasOwnProperty('wikipediaScore') >= 0.5) {
+						azureOrgArray.push(entity.name);
+					}
+				} else if(entity.type == "Person" && entity.matches[0].hasOwnProperty('wikipediaScore')) {
+					if(entity.matches[0].hasOwnProperty('wikipediaScore') >= 0.5) {
+						azurePersonArray.push(entity.name);
+					}
 				}
 			});
 			resolve([azurePersonArray,azureOrgArray]);
