@@ -55,9 +55,7 @@ function tokenFunc() {
 					if(error) {
 						reject(error)
 					}
-					let auth = body.substring(body.indexOf("{"));
-					auth = JSON.stringify(auth);
-					if(auth.code == "jwt_auth_valid_token") {
+					if(body.code == "jwt_auth_valid_token") {
 						resolve(info);
 					}
 				});
