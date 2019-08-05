@@ -30,9 +30,11 @@ open
 		process.exit(1);
 	});
 
+// Returns token for JWT authentication
 function tokenFunc() {
 	let data = {username : process.env.WORDPRESS_USER, password : process.env.WORDPRESS_PASS};
 	return new Promise(function(resolve, reject)  {
+		// First request obtains token itself
 		request({
 			url: process.env.WORDPRESS_ROOT_PATH + "/wp-json/jwt-auth/v1/token",
 			ContentType : 'application/x-www-form-urlencoded',
@@ -45,6 +47,7 @@ function tokenFunc() {
 				let info = body.substring(body.indexOf("{"));
 				info = JSON.parse(info);
 				info = info.token;
+				// Second request validates if the token in valid
 				request({
 					url: process.env.WORDPRESS_ROOT_PATH + '/wp-json/jwt-auth/v1/token/validate',
 					ContentType: 'application/json',
@@ -77,11 +80,13 @@ async function checkPostIDValilidy(message) {
 		}, function(error,response,body) {
 			if(error) {
 				console.log("error: ", error);
-				return false;
+				resolve(0);
 			}
+			console.log(response);
 			let bodyStr = body.toString().substring(body.toString().indexOf('{'));
 			bodyStr = JSON.stringify(bodyStr);		
 				if(body.id) {
+					// If key "id" exists that means it is a valid postID
 					resolve(1);
 				} else {
 					resolve(0);
