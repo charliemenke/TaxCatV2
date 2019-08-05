@@ -126,9 +126,7 @@ function watsonResponse(bodyStr) {
 function azureResponse(bodyStr) {
 	let azureOrgArray = [];
 	let azurePersonArray = [];
-	let jsonData = { documents: [
-	 { id : '1', text : bodyStr, language : 'en' } ] }
-	 {id;
+	let jsonData = { documents: [ { id : '1', text : bodyStr, language : 'en' } ] };
 				   
 	return new Promise(function(resolve,reject) {
 		request({
