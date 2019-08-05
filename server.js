@@ -55,13 +55,9 @@ function tokenFunc() {
 					if(error) {
 						reject(error)
 					}
-					console.log(body);
-					console.log(typeof(body));
-					let bodyStr = body.toString().substring(body.toString().indexOf('{'));
-					console.log(bodyStr);
-					console.log(typeof(bodyStr));
-					bodyStr = JSON.stringify(bodyStr);
-					if(bodyStr.code == "jwt_auth_valid_token") {
+					let auth = body.substring(body.indexOf("{"));
+					auth = JSON.stringify(auth);
+					if(auth.code == "jwt_auth_valid_token") {
 						resolve(info);
 					}
 				});
