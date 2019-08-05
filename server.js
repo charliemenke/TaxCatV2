@@ -46,7 +46,6 @@ function tokenFunc() {
 				info = JSON.parse(info);
 				info = info.token;
 				resolve(info);
-				/*
 				request({
 					url: process.env.WORDPRESS_ROOT_PATH + '/wp-json/jwt-auth/v1/token/validate',
 					ContentType: 'application/json',
@@ -63,7 +62,6 @@ function tokenFunc() {
 						resolve(info);
 					}
 				});
-				*/
 			}
 		});
 	});
@@ -98,7 +96,6 @@ async function checkPostIDValilidy(message) {
 
 // Confirm channel is created and plublish the message glenned from POST request
 function addMessage(message, valid) {
-	console.log("valid: " + valid);
 	return open
 		.then(connection => {
 			return connection.createChannel();

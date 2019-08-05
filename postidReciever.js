@@ -126,7 +126,9 @@ function watsonResponse(bodyStr) {
 function azureResponse(bodyStr) {
 	let azureOrgArray = [];
 	let azurePersonArray = [];
-	let jsonData = { documents: [ { id : '1', text : bodyStr, language : 'en' } ] };
+	let jsonData = { documents: [
+	 { id : '1', text : bodyStr, language : 'en' } ] }
+	 {id;
 				   
 	return new Promise(function(resolve,reject) {
 		request({
@@ -168,12 +170,14 @@ function splitDocument(bodyStr) {
 	let azureOrgArray = [];
 	let azurePersonArray = [];
 
+	// Replacing white space and html
 	bodyStr = bodyStr.replace(/<[^>]*>?/gm, '');
 	bodyStr = bodyStr.replace(/\s\s+/g, ' ');
 
 	docLength = bodyStr.length;
 	numSplits = Math.floor(docLength / 5100);
 	return new Promise(async function(resolve, reject) {
+		// If Document needs to be split, break up into 5100 char chunks and send to azureResponse()
 		if(numSplits == 0) {
 			let termArr = await azureResponse(bodyStr);
 			termArr[0].forEach(function(term) {
