@@ -42,6 +42,7 @@ function tokenFunc() {
 			if(error) {
 				reject(error)
 			} else {
+				body = body.toString();
 				let info = body.substring(body.indexOf("{"));
 				info = JSON.parse(info);
 				info = info.token;
