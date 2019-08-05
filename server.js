@@ -56,7 +56,7 @@ function tokenFunc() {
 						reject(error)
 					}
 					let bodyStr = body.toString().substring(body.toString().indexOf('{'));
-					bodyStr = JSON.stringify(bodyStr);
+					bodyStr = JSON.parse(bodyStr);
 					console.log(bodyStr);
 					if(bodyStr.code == "jwt_auth_valid_token") {
 						resolve(info);
