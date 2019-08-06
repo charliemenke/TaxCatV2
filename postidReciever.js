@@ -63,6 +63,7 @@ function postResponse(JWTtoken, postID) {
 			bodyStr = body.substring(body.indexOf('{"id"'));
 			bodyStr = bodyStr.substr(0,bodyStr.lastIndexOf("}") + 1);
 			bodyStr = JSON.parse(bodyStr).content.rendered;
+			console.log(bodyStr);
 			resolve(bodyStr);
 		});
 	});
@@ -123,7 +124,6 @@ function watsonResponse(bodyStr) {
 }
 
 function azureResponse(bodyStr) {
-	console.log(bodyStr);
 	let azureOrgArray = [];
 	let azurePersonArray = [];
 	let jsonData = { documents: [ { id : '1', text : bodyStr, language : 'en' } ] };
