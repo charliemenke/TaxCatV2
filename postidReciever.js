@@ -67,9 +67,7 @@ function postResponse(JWTtoken, postID) {
 				reject(error);
 			}
 			// Cleaning up response and parsing to JSON object
-			bodyStr = body.substring(body.indexOf('{"id"'));
-			bodyStr = bodyStr.substr(0,bodyStr.lastIndexOf("}") + 1);
-			bodyStr = JSON.parse(bodyStr).content.rendered;
+			bodyStr = body.content.rendered;
 			console.log(bodyStr);
 			resolve(bodyStr);
 		});
