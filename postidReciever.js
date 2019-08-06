@@ -68,7 +68,6 @@ function postResponse(JWTtoken, postID) {
 			}
 			// Cleaning up response and parsing to JSON object
 			bodyStr = body.content.rendered;
-			console.log(bodyStr);
 			resolve(bodyStr);
 		});
 	});
