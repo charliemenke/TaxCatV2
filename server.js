@@ -47,6 +47,7 @@ function tokenFunc() {
 				let info = body.substring(body.indexOf("{"));
 				info = JSON.parse(info);
 				info = info.token;
+				console.log(info);
 				// Second request validates if the token in valid
 				request({
 					url: process.env.WORDPRESS_ROOT_PATH + '/wp-json/jwt-auth/v1/token/validate',
