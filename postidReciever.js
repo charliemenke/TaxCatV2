@@ -52,9 +52,16 @@ function postResponse(JWTtoken, postID) {
 	return new Promise(function(resolve, promise) {
 		request({
 			url: process.env.WORDPRESS_ROOT_PATH + "/wp-json/wp/v2/posts/" + postID,
-			method: "GET",
-			headers: {},
-			auth: {'bearer' : JWTtoken}
+			method: "POST",
+			headers: {
+				'Content-Type' : 'application/json',
+			},
+			auth: {'bearer' : JWTtoken},
+			method: "POST",
+			json: true,
+			body: {
+				"fromServer" : "1",
+			}
 		}, function(error,response,body) {
 			if(error) {
 				reject(error);
