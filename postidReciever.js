@@ -1,6 +1,5 @@
 const request = require('request');
 const amqp = require('amqplib');
-const aws = require('aws-sdk');
 require('dotenv').config();
 
 // Returns promise that resolves JWT Token for WordPress authentication
@@ -89,7 +88,7 @@ function watsonResponse(bodyStr) {
 			},
 			body: {
 				"language" : "en",
-				"html" : bodyStr,
+				"text" : bodyStr,
 				"features" : {
 					"entities" : {
 						"emotion" : false,
@@ -164,6 +163,9 @@ function azureResponse(bodyStr) {
 	});
 }
 
+// This function can be **improved**, currently if document is longer than 5100 chars (max length for azure responses)
+// it splits it into the least amount of subDocs and sends them individually. I think there is a way to send multiple
+// docs in one request and have them handeled as one individual doc.
 function splitDocument(bodyStr) {
 	let azureOrgArray = [];
 	let azurePersonArray = [];
@@ -173,6 +175,7 @@ function splitDocument(bodyStr) {
 	bodyStr = bodyStr.replace(/\s\s+/g, ' ');
 
 	docLength = bodyStr.length;
+	// Calculating number of documents needed to send
 	numSplits = Math.floor(docLength / 5100);
 	return new Promise(async function(resolve, reject) {
 		// If Document needs to be split, break up into 5100 char chunks and send to azureResponse()
@@ -223,11 +226,8 @@ return open
 			if (msgOrFalse !== false) {
 				result = msgOrFalse.content.toString() + " : Message recieved at " + new Date();
 				let postID = msgOrFalse.content.toString();
-				//console.log(postID);
 				let token = await tokenFunc().catch(error => console.log(error));
-				//console.log(token);
 				let bodyStr = await postResponse(token, postID).catch(error => console.log(error));
-				//console.log(bodyStr);
 				let aterms = await splitDocument(bodyStr).catch(error => console.log(error));
 				let wterms = await watsonResponse(bodyStr).catch(error => console.log(error));
 				let orgTerms = [...wterms[1], ...aterms[1]];
