@@ -123,6 +123,7 @@ function watsonResponse(bodyStr) {
 }
 
 function azureResponse(bodyStr) {
+	console.log(bodyStr);
 	let azureOrgArray = [];
 	let azurePersonArray = [];
 	let jsonData = { documents: [ { id : '1', text : bodyStr, language : 'en' } ] };
