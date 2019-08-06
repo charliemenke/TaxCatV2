@@ -82,7 +82,8 @@ async function checkPostIDValilidy(message) {
 				console.log("error: ", error);
 				resolve(0);
 			}
-			console.log(response);
+			// TODO: Add checking for origin url -> useful for when more than one site pinging this service
+			// console.log(response);
 			let bodyStr = body.toString().substring(body.toString().indexOf('{'));
 			bodyStr = JSON.stringify(bodyStr);		
 				if(body.id) {
