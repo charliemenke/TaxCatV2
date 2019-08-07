@@ -267,7 +267,7 @@ return open
 			let end = new Date() - start;
 			channel.ack(msgOrFalse);
 			console.log("\x1b[1;36m", "[-] ", result);
-			console.log("\x1b[1;36m", "Execution time: %dms", end);
+			console.info('Execution time: %dms', end);
 			console.log("-------------------------------------------------------------------------------------------------------|");
 		});
 
