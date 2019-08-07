@@ -227,6 +227,7 @@ return open
 		// Setting up consumer for "sampleQueue" to read in messages sent by server.js
 		// This block of code is written utilizing the new ECS8 Async and Await functionality
 		return channel.consume(queueName, async function(msgOrFalse) {
+			let start = new Date();
 			let result = "No messages in queue";
 			if (msgOrFalse !== false) {
 				result = msgOrFalse.content.toString() + " : Message recieved at " + new Date();
@@ -263,8 +264,10 @@ return open
 				});
 			}
 			// Acknowledge message was processed and are ready for the next message in queue
+			let end = new Date() - start;
 			channel.ack(msgOrFalse);
 			console.log("\x1b[1;36m", "[-] ", result);
+			console.log("\x1b[1;36m", "Execution time: %dms", end);
 			console.log("-------------------------------------------------------------------------------------------------------|");
 		});
 
