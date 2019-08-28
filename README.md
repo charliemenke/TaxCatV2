@@ -2,6 +2,7 @@
 
 TaxCat (Taxonomies & Categories) is a Node.js Listening server that implements RabbitMQ's messaging protocol to listen for WordPress post publishes and updates and runs the body text through IMB's & Microsoft's cognitive text API, returning custom "Company, People, and Concepts" taxonomies mentioned, then updating the relevant post.
 
+This project has been rewritten from PHP to Javascript. If you want to look at the old PHP code it is located in the DeprPHP folder. Additionally, the bulk of this software is located in the server.js and postidReciver.js file.
 
 # Setting up
 
