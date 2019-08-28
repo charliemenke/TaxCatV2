@@ -1,6 +1,6 @@
 # Welcome to TaxCat V2!
 
-TaxCat is a Node.js Listening server that implements RabbitMQ's messaging protocol to listen for WordPress post publishes and updates and runs the body text through IMB's Watson cognitive text API, returning custom "Company" and "People" taxonomies, updating the relevant post.
+TaxCat (Taxonomies & Categories) is a Node.js Listening server that implements RabbitMQ's messaging protocol to listen for WordPress post publishes and updates and runs the body text through IMB's & Microsoft's cognitive text API, returning custom "Company, People, and Concepts" taxonomies mentioned, then updating the relevant post.
 
 
 # Setting up
@@ -81,65 +81,73 @@ function custom_taxonomy()
   );  
   register_taxonomy('organization', array('post'), $args);  
 }  
-add_action( 'init', 'custom_taxonomy', 0 );  
-  
-function sb_add_taxes_to_api() {  
-  $taxonomies = get_taxonomies( '', 'objects' );  
-  foreach( $taxonomies as $taxonomy ) {  
-        $taxonomy->show_in_rest = true;  
-  }  
-}  
-add_action( 'init', 'sb_add_taxes_to_api', 30 );  
-  
-function cmAC_add_terms( $post, $request, $creating) {  
-    $params = $request->get_json_params();  
-    if(array_key_exists("terms", $params)) {  
-        remove_action('rest_after_insert_post', 'cmAC_add_terms');  
-        foreach($params["terms"] as $taxonomy => $terms) {  
-            wp_set_object_terms($post->ID, $terms, $taxonomy);  
-        }  
-        add_action('rest_after_insert_post', 'cmAC_add_terms');  
-    }  
-}  
-add_action("rest_after_insert_post", "cmAC_add_terms", 10, 3);  
-  
-  
-function cmAC_send_postID($post_ID) {  
-  if( file_get_contents('php://input') ) {  
-        return;  
-  }  
-  
-    // Autosave, do nothing  
-  if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )  
-        return;  
-  // AJAX? Not used here  
-  if ( defined( 'DOING_AJAX' ) && DOING_AJAX )  
-        return;  
-  // Check user permissions  
-  if ( ! current_user_can( 'edit_post', $post_ID ) )  
-        return;  
-  // Return if it's a post revision  
-  if ( false !== wp_is_post_revision( $post_ID ) )  
-        return;  
-  
-  
-  $args = array('headers' => array('Content-Type' => 'application/json'),  
-  'body' => json_encode(array("postID" => $post_ID)),  
-  'timeout' => '10',  
-  'redirection' => '5',  
-  'httpversion' => '1.0',  
-  'blocking' => true,  
-  'cookies' => array()  
-  );  
-  
-  if( get_post_status($post_ID) == 'publish' ) {  
-      remove_action('save_post', 'cmAC_send_postID');  
-      wp_remote_post('http://localhost:3000/postID', $args);  
-      add_action('save_post', 'cmAC_send_postID');  
-  }  
-  
-}  
+add_action( 'init', 'custom_taxonomy', 0 );
+
+function sb_add_taxes_to_api() {
+    $taxonomies = get_taxonomies( '', 'objects' );
+
+    foreach( $taxonomies as $taxonomy ) {
+        $taxonomy->show_in_rest = true;
+    }
+}
+add_action( 'init', 'sb_add_taxes_to_api', 30 );
+
+function cmAC_add_terms( $post, $request, $creating) {
+    $params = $request->get_json_params();
+    if(array_key_exists("terms", $params)) {
+        remove_action('rest_after_insert_post', 'cmAC_add_terms');
+        foreach($params["terms"] as $taxonomy => $terms) {
+            wp_set_object_terms($post->ID, $terms, $taxonomy);
+        }
+        add_action('rest_after_insert_post', 'cmAC_add_terms');
+    }
+}
+
+add_action("rest_after_insert_post", "cmAC_add_terms", 10, 3);
+
+
+function cmAC_send_postID($post_ID) {
+
+    if(file_get_contents('php://input') ) {
+        $rawData = file_get_contents('php://input');
+        if($data = json_decode($rawData, true)) {
+            if (array_key_exists("fromServer", $data)) {
+                return;
+            }
+        }
+    }
+
+    // Autosave, do nothing
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
+        return;
+    // AJAX? Not used here
+    if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
+        return;
+    // Check user permissions
+    if ( ! current_user_can( 'edit_post', $post_ID ) )
+        return;
+    // Return if it's a post revision
+    if ( false !== wp_is_post_revision( $post_ID ) )
+        return;
+
+    $args = array('headers' => array('Content-Type' => 'application/json'),
+        'body' => json_encode(array("postID" => $post_ID)),
+        'timeout' => '10',
+        'redirection' => '5',
+        'httpversion' => '1.0',
+        'blocking' => true,
+        'cookies' => array()
+    );
+
+    if( get_post_status($post_ID) == 'publish' ) {
+        remove_action('save_post', 'cmAC_send_postID');
+        wp_remote_post('http://13.89.60.146:3000/postID', $args);
+        add_action('save_post', 'cmAC_send_postID');
+    }
+
+}
 add_action('save_post', 'cmAC_send_postID',10,1);
+?>
 ```
 
  Next, navigate where you would like to install the package...
@@ -150,6 +158,14 @@ npm install
 npm update
 ```
 Before going any further, make sure to add the environment variables to the .ENV file. Open the .example.ENV and save as .ENV
+You have two options to run this software. First is using the npm package concurrently which is already set up. Just run ->
+
+```sh
+npm start
+```
+
+Your other option is to run each script seperatly in new shell instances.
+
 ```sh
 node server.js
 ```
@@ -158,7 +174,6 @@ node server.js
 cd /Path/To/TaxCat/Instalation
 node postidReviever.js
 ```
-It is necessary to have two instances of shell open to run both processes of RabbitMQ (The publisher and the Worker).
 
 ## Dependencies
 
@@ -169,3 +184,7 @@ TaxCat dependes on a few basic packages to handle http requests, secret env vari
 - Amqplib [[https://www.npmjs.com/package/amqplib](https://www.npmjs.com/package/amqplib)]
 - Request [[https://github.com/request/request](https://github.com/request/request)]
 - Dotenv [[https://www.npmjs.com/package/dotenv](https://www.npmjs.com/package/dotenv)]
+- Chai [[https://www.chaijs.com/](https://www.chaijs.com/)]
+- Chia-http [[https://www.chaijs.com/plugins/chai-http/](https://www.chaijs.com/plugins/chai-http/)]
+- Mocha [[https://mochajs.org](https://mochajs.org)]
+- Concurrently [[https://github.com/kimmobrunfeldt/concurrently](https://github.com/kimmobrunfeldt/concurrently)]
