@@ -151,6 +151,33 @@ add_action('save_post', 'cmAC_send_postID',10,1);
 ?>
 ```
 
+You must also add this to your WordPress Header file to update the google ad keywords
+```php
+<!-- Organization Name -->
+                googletag.pubads().setTargeting('organization', <?php
+                    $orgs = get_the_terms(  get_the_ID(), 'organization' );
+                    $orgTerms = array();
+                    if($orgs !== false) {
+                        foreach($orgs as $org) {
+                            $orgTerms[] = $org->name;
+                        }
+                    }
+                    echo json_encode($orgTerms);
+                    ?>);
+
+            <!-- Person Name -->
+            googletag.pubads().setTargeting('people', <?php
+                $people = get_the_terms(  get_the_ID(), 'people' );
+                $person = array();
+                if($people !== false) {
+                    foreach($people as $persons) {
+                        $person[] = $persons->name;
+                    }
+                }
+                echo json_encode($person);
+                ?>);
+```
+
  Next, navigate where you would like to install the package...
 ```sh
 $ git clone ...
